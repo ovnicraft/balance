@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% load static %}
+{% block contenido %}
+	<div class="col-xs-12 col-sm-4">
+		<div class="widget-box">
+			<div class="widget-header">
+				<h4>Información General</h4>
+
+				<div class="widget-toolbar">
+				</div>
+			</div>
+
+			<div class="widget-body">
+				<div class="widget-main">
+					 <form method="post" id="myform">{% csrf_token %}
+						<div>
+							<label for="form-field-8">Empresa</label>
+
+							<textarea class="form-control limited" id="form-field-8" placeholder="Ingrese el texto" maxlength="50"></textarea>
+						</div>
+
+						<hr />
+						<div>
+							<label for="form-field-9">Misi&oacute;n</label>
+
+							<textarea class="form-control limited" id="form-field-9" maxlength="200"></textarea>
+						</div>
+
+						<hr />
+					</form>
+				</div>
+			</div>
+
+			<div class="clearfix form-actions">
+				<div class="col-sm-offset-3 col-sm-9">
+				
+					<button class="pull-right btn btn-sm" type="reset" id="id_reset">
+						<i class="icon-undo bigger-110"></i>
+							Reset
+					</button>
+					<button class="pull-right btn btn-sm btn-info" type="button" id="id_submit">
+						<i class="icon-ok bigger-110"></i>
+							Submit
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block jquery %}
+	<script src="{% static "assets/js/jquery.inputlimiter.1.3.1.min.js" %}"></script>
+	<script type="text/javascript">
+		jQuery(function($) {
+
+			$('#form-field-8').val("{{empresa}}");
+			$('#form-field-9').val("{{descripcion}}");
+
+			$('textarea.limited').inputlimiter({
+				remText: '%n caracteres restantes...',
+				limitText: 'M&aacute;ximo : %n.'
+			});
+
+			$('#id_reset').click(function(){
+				$('#form-field-8').val(""),
+				$('#form-field-9').val("")
+			});
+			 $("#id_submit").click(function() {
+	           $.ajax({
+	               type: "POST",
+	               url : "../envio-mision/",
+	               dataType:"json",
+	               data:{
+	                   "empresa":$('#form-field-8').val(),
+	                   "descripcion":$('#form-field-9').val()
+	               },
+	               success: function(data){
+	                  // $('#result').append('server Response: '+ json.server_response);//
+	                   alert(data.message);
+	               },
+	           });
+   			});
+
+			//-------------------------------------
+			function getCookie(name) {
+		        var cookieValue = null;
+		        var i = 0;
+		        if (document.cookie && document.cookie !== '') {
+		            var cookies = document.cookie.split(';');
+		            for (i; i < cookies.length; i++) {
+		                var cookie = jQuery.trim(cookies[i]);
+		                // Does this cookie string begin with the name we want?
+		                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+		                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+		                    break;
+		                }
+		            }
+		        }
+		        return cookieValue;
+		    }
+
+		    var csrftoken = getCookie('csrftoken');
+		 
+		    function csrfSafeMethod(method) {
+		        // these HTTP methods do not require CSRF protection
+		        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+		    }
+
+		    $.ajaxSetup({
+		        crossDomain: false, // obviates need for sameOrigin test
+		        beforeSend: function(xhr, settings) {
+		            if (!csrfSafeMethod(settings.type)) {
+		                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+		            }
+		        }
+		    });	
+		});
+	</script>
+{% endblock %}

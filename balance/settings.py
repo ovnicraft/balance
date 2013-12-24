@@ -8,7 +8,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = [
-    # ("Your Name", "your_email@example.com"),
+    ("Administrador", "your_email@example.com"),
 ]
 
 MANAGERS = ADMINS
@@ -137,6 +137,7 @@ INSTALLED_APPS = [
     
     # project
     "balance",
+    "scorecard",
 ]
 
 # A sample logging configuration. The only tangible logging
@@ -183,6 +184,11 @@ ACCOUNT_LOGIN_REDIRECT_URL = "home"
 ACCOUNT_LOGOUT_REDIRECT_URL = "home"
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 2
 
+LOGIN_REDIRECT_URL = "/scorecard"
+LOGOUT_REDIRECT_URL = "/scorecard"
+
 AUTHENTICATION_BACKENDS = [
     "account.auth_backends.UsernameAuthenticationBackend",
 ]
+
+SITE_NAME = "Balance Scorecard - Prefectura del Azuay"

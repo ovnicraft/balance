@@ -7,6 +7,9 @@ from models import Indicador
 from models import CategoriaIndicador
 from models import UnidadMedida
 
+from account.forms import LoginForm
+
+
 class MisionForm(ModelForm):
     class Meta:
         model=Mision

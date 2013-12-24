@@ -2,29 +2,41 @@
 from django.template.loader import get_template
 from django.template import Context, RequestContext
 from django.http import Http404, HttpResponse
-from forms import MisionForm, PerspectivaForm, CategoriaIndicadorForm, UnidadMedidaForm, IndicadorForm
-from models import Mision, Perspectiva, CategoriaIndicador, UnidadMedida, Indicador, CategoriaXIndicador
+
 from django.shortcuts import render_to_response
 from django.core import serializers
 from django.http import QueryDict
+
+from django.conf import settings
+
+from forms import MisionForm, PerspectivaForm, CategoriaIndicadorForm, UnidadMedidaForm, IndicadorForm
+from models import Mision, Perspectiva, CategoriaIndicador, UnidadMedida, Indicador, CategoriaXIndicador 
+
 import json
 import socket
 
-import pdb
+from account.views import LoginView
 
-def main(request):
-    t=get_template('base.html')
-    html= t.render(Context({'title':'BSC GPA'}))
-    return HttpResponse(html)
 
-def showUnidad(request):
-    unidades=UnidadMedida.objects.all()
-    data={'title':'BSC GPA'}
-    csrfContext=RequestContext(request,data)
-    return render_to_response('unidades.html', data, csrfContext)
+def home(request):
+    """
+    """
+    data = {'title': settings.SITE_NAME }
+    csrfContext = RequestContext(request)
+    return render_to_response("main.html", data, csrfContext)
 
-def showMision(request):
-    t=get_template('mision.html')
+def show_unidad(request):
+    """
+    """
+    unidades = UnidadMedida.objects.all()
+    data = {'title': settings.SITE_NAME }
+    csrfContext = RequestContext(request,data)
+    return render_to_response('scorecard/unidades.html', data, csrfContext)
+
+def show_mision(request):
+    """
+    """    
+    t=get_template('scorecard/mision.html')
     data={'title':'BSC GPA'}
     misiones=Mision.objects.all()
     if misiones.count()>0:
@@ -32,10 +44,11 @@ def showMision(request):
     else:
         data={'title':'BSC GPA', 'empresa':'','descripcion':''}
     csrfContext=RequestContext(request,data)
-    #html= t.render(Context(data,csrfContext))
-    #return HttpResponse(html)
-    return render_to_response('mision.html', data, csrfContext)
-def ingresarMision(request):
+    return render_to_response('scorecard/mision.html', data, csrfContext)
+
+def ingresar_mision(request):
+    """
+    """    
     if request.is_ajax() and request.POST:
         form=MisionForm(request.POST)
         if form.is_valid():
@@ -56,7 +69,8 @@ def ingresarMision(request):
         return HttpResponse(json.dumps(data),content_type='application/json')
     else:
         raise Http404
-def editarUnidad(request):
+
+def editar_unidad(request):
     if request.is_ajax() and request.POST:
         mydict=QueryDict.dict(request.POST)
         if mydict['oper'] == 'add':
@@ -77,8 +91,9 @@ def editarUnidad(request):
             data={'message':'Error'}
         return HttpResponse(json.dumps(data),content_type='application/json')
     else:
-        raise Http404    
-def editarCategoria(request):
+        raise Http404
+
+def editar_categoria(request):
     if request.is_ajax() and request.POST:
         mydict=QueryDict.dict(request.POST)
         if mydict['oper'] == 'add':
@@ -101,7 +116,9 @@ def editarCategoria(request):
     else:
         raise Http404
 
-def editIndicador(request):
+def edit_indicador(request):
+    """
+    """
     if request.is_ajax() and request.POST:
         mydict=QueryDict.dict(request.POST)
         if mydict['oper'] == 'add':
@@ -119,7 +136,9 @@ def editIndicador(request):
     else:
         raise Http404  
 
-def loadSelectUnidades(request):
+def load_select_unidades(request):
+    """
+    """
     data = "<select>"
     unidades = UnidadMedida.objects.all()
     n=0
@@ -128,7 +147,10 @@ def loadSelectUnidades(request):
         n += 1
     data+="</select>"    
     return HttpResponse(data,content_type='application/json')
-def loadSelectCategorias(request):
+
+def load_select_categorias(request):
+    """
+    """
     data = "<select>"
     categorias = CategoriaIndicador.objects.all()
     n=0
@@ -138,16 +160,21 @@ def loadSelectCategorias(request):
     data+="</select>"    
     return HttpResponse(data,content_type='application/json')
 
-def loadSelectPerspectivas(request):
+def load_select_perspectivas(request):
+    """
+    """
     data=serializers.serialize( "json",Perspectiva.objects.all())
     return HttpResponse(data, content_type="application/json")
 
-def loadSelectCategoria(request):
+def load_select_categoria(request):
+    """
+    """
     data=serializers.serialize( "json",CategoriaIndicador.objects.all())
     return HttpResponse(data, content_type="application/json")
 
-def editPerspectiva(request):
-    
+def edit_perspectiva(request):
+    """
+    """
     if request.is_ajax() and request.POST:
         mydict=QueryDict.dict(request.POST)
         if mydict['oper'] == 'edit':
@@ -176,43 +203,47 @@ def editPerspectiva(request):
         return HttpResponse(json.dumps(data),content_type='application/json')
     else:
         raise Http404    
-def loadPerspectiva(request):
+def load_perspectiva(request):
     data = serializers.serialize("json", Perspectiva.objects.all())
     #pdb.set_trace()
     return HttpResponse(data,content_type='application/json')
 
-def loadUnidades(request):
+def load_unidades(request):
     data = serializers.serialize("json", UnidadMedida.objects.all())
     #pdb.set_trace()
     return HttpResponse(data,content_type='application/json')
 
-def showCategoria(request):
-    t=get_template('categorias.html')
+def show_categoria(request):
+    t=get_template('scorecard/categorias.html')
     html= t.render(Context({'title':'BSC GPA', 'empresa':'Gobierno Provincial del Azuay'}))
     return HttpResponse(html)
 
-def showEstrategia(request):
-    t=get_template('estrategia.html')
+def show_estrategia(request):
+    t=get_template('scorecard/estrategia.html')
     data={'title':'BSC GPA', 'empresa':'Gobierno Provincial del Azuay'}
     csrfContext=RequestContext(request,data)
     html= t.render(csrfContext)
     return HttpResponse(html)
 
-def showIndicador(request):
-    t=get_template('indicadores.html')
-
+def show_indicador(request):
+    """
+    """
+    t=get_template('scorecard/indicadores.html')
     data={'title':'BSC GPA', 'empresa':'Gobierno Provincial del Azuay'}
     csrfContext=RequestContext(request,data)
     html= t.render(csrfContext)
     return HttpResponse(html)
-def loadSelectCategoriaTipo(request):
-    mydict=QueryDict.dict(request.POST)
-    aux=CategoriaXIndicador.objects.all().distinct('categoria')
-    indicadores=[]
+
+def load_select_categoria_tipo(request):
+    """
+    """
+    mydict = QueryDict.dict(request.POST)
+    aux = CategoriaXIndicador.objects.all().distinct('categoria')
+    indicadores = []
     data=""
     for i in aux:
-        aux_categoria=CategoriaIndicador.objects.get(pk=i.categoria_id)
-        if mydict['tipo']=="Todos":
+        aux_categoria = CategoriaIndicador.objects.get(pk=i.categoria_id)
+        if mydict['tipo'] == "Todos":
             data= Indicador.objects.all().values_list()
             n=0
             array=[]
@@ -220,7 +251,6 @@ def loadSelectCategoriaTipo(request):
                 unidad=UnidadMedida.objects.get(pk=i[4]) 
                 aux={'id':i[0], 'nombre':i[1], 'numerador':i[2], 'denominador':i[3], 'unidad':unidad.nombre}
                 array.append(aux)
-            #pdb.set_trace()
             data=json.dumps(array)
         elif mydict['tipo']==aux_categoria.nombre:
             aux_indicadores=CategoriaXIndicador.objects.all().filter(categoria=aux_categoria.id)
@@ -233,40 +263,43 @@ def loadSelectCategoriaTipo(request):
             break
     return HttpResponse(data, content_type='application/json')
 
-def loadIndicadores(request):
+def load_indicadores(request):
+    """
+    """
     try:
-        data= Indicador.objects.all().values_list()
-        n=0
-        array=[]
+        data = Indicador.objects.all().values_list()
+        n = 0
+        array = []
         for i in data:
-            unidad=UnidadMedida.objects.get(pk=i[4]) 
-            aux={'id':i[0], 'nombre':i[1], 'numerador':i[2], 'denominador':i[3], 'unidad':unidad.nombre}
+            unidad = UnidadMedida.objects.get(pk=i[4]) 
+            aux = {'id':i[0], 'nombre':i[1], 'numerador':i[2], 'denominador':i[3], 'unidad':unidad.nombre}
             array.append(aux)
-        #pdb.set_trace()
         data=json.dumps(array)
-        #data=serializers.serialize("json", data)
         return HttpResponse(data, content_type='application/json')
     except:
         return HttpResponse("", content_type='application/json')
-def opcionesSelectCategorias():
-    data= CategoriaIndicador.objects.all().values_list()
+def opciones_select_categorias():
+    data = CategoriaIndicador.objects.all().values_list()
     aux=""
     for i in data:
         aux+='<option value="'+i[1]+'">'+i[1]+"</option>"
     return aux
 
-def loadCategorias(request):
+def load_categorias(request):
     data= serializers.serialize("json", CategoriaIndicador.objects.all())
     return HttpResponse(data, content_type='application/json')
 
-def showPerspectiva(request):
-    t=get_template('perspectiva.html')
+def show_perspectiva(request):
+    t=get_template('scorecard/perspectiva.html')
     html= t.render(Context({'title':'BSC GPA', 'empresa':'Gobierno Provincial del Azuay'}))
     return HttpResponse(html)
-def ingresarCategoriasXIndicador(request):
-    t=get_template('ingreso_categorias.html')
-    opciones=opcionesSelectCategorias()
-    data={'title':'BSC GPA', 'empresa':'Gobierno Provincial del Azuay', 'opciones_select':opciones}
-    csrfContext=RequestContext(request,data)
-    html= t.render(csrfContext)
+
+def ingresar_categorias_indicador(request):
+    t = get_template('scorecard/ingreso_categorias.html')
+    opciones = opcionesSelectCategorias()
+    data = {'title':'BSC GPA', 'empresa':'Gobierno Provincial del Azuay', 'opciones_select':opciones}
+    csrfContext = RequestContext(request,data)
+    html = t.render(csrfContext)
     return HttpResponse(html)
+
+    

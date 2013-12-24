@@ -1,6 +1,6 @@
-{% extends "base.html" %}
+{% extends "main.html" %}
 {% load static %}
-{% block css%}
+{% block extra_css %}
 	<link rel="stylesheet" href="{% static "assets/css/jquery-ui-1.10.3.full.min.css" %}"/>
 	<link rel="stylesheet" href="{% static "assets/css/datepicker.css"  %}"/>
 	<link rel="stylesheet" href="{% static "assets/css/ui.jqgrid.css" %}"/>
@@ -8,7 +8,7 @@
 {% block contenido %}				
 		<div class="page-header">
 			<h1>
-				{{empresa}}
+				{{ empresa }}
 				<small>
 					<i class="icon-double-angle-right"></i>
 					Perspectivas Definidas para el Balanced Scorecard

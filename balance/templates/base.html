@@ -52,12 +52,8 @@
       {% block navbar %}
       {% endblock %}
 
-      {% block sidebar %}
-      {% endblock %}
-
       {% block content %}
       {% endblock %}
-
 		<!-- basic scripts -->
 
 		<!--[if !IE]> -->
@@ -79,17 +75,15 @@
 		</script>
 		<script src="{% static "assets/js/bootstrap.min.js" %}"></script>
 		<script src="{% static "assets/js/typeahead-bs2.min.js" %}"></script>
+		<!-- ace scripts -->
+		<script src="{% static "assets/js/ace-elements.min.js" %}"></script>
+		<script src="{% static "assets/js/ace.min.js" %}"></script>
 
 		<!-- page specific plugin scripts -->
 		{% block librerias %}
 		{% endblock %}
-		<!-- ace scripts -->
-
-		<script src="{% static "assets/js/ace-elements.min.js" %}"></script>
-		<script src="{% static "assets/js/ace.min.js" %}"></script>
 
 		{% block jquery %}
-
 		{% endblock %}
 		<!-- inline scripts related to this page -->
 	</body>

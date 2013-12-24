@@ -1,0 +1,472 @@
+{% extends "base.html" %}
+{% load static %}
+{% block css%}
+	<link rel="stylesheet" href="{% static "assets/css/jquery-ui-1.10.3.custom.min.css" %}"/>
+	<!--link rel="stylesheet" href="{% static "assets/css/chosen.css" %}"/-->
+	<link rel="stylesheet" href="{% static "assets/css/ui.jqgrid.css" %}"/>
+{% endblock %}
+{% block contenido %}
+<div class="col-xs-12 col-sm-10">
+	<div class="widget-box">
+		<div class="widget-header">
+			<h4>Ingresar Estrat&eacute;gias</h4>
+
+			<span class="widget-toolbar">
+				<a href="#" data-action="settings">
+					<i class="icon-cog"></i>
+				</a>
+
+				<a href="#" data-action="reload">
+					<i class="icon-refresh"></i>
+				</a>
+
+				<a href="#" data-action="collapse">
+					<i class="icon-chevron-up"></i>
+				</a>
+
+				<a href="#" data-action="close">
+					<i class="icon-remove"></i>
+				</a>
+			</span>
+		</div>
+		<div class="widget-body">
+			<div class="widget-main">
+				<div class="form-horizontal">
+					<div class="form-group">
+						<label class="col-sm-3 control-label no-padding-right" for="txt_nombre">Nombre : </label>
+						<div class="col-sm-9">
+							<input type="text" class="col-xs-10 col-sm-5" id="txt_nombre" placeholder="Nombre"/>
+						</div>
+					</div>
+					
+					<div class="space-4"></div>
+
+					<div class="form-group">
+						<label class="col-sm-3 control-label no-padding-right" for="txt_descripcion">Descripción : </label>
+						<div class="col-sm-9">
+							<textarea type="text" class="col-xs-10 col-sm-5 width-70" id="txt_descripcion" placeholder="Descripción"></textarea>
+						</div>
+					</div>
+
+					<div class="space-4"></div>
+
+					<div class="form-group">
+						<label class="col-sm-3 control-label no-padding-right" for="id_perspectiva">Perspectiva: </label>
+						<div class="col-sm-9">
+							<select class="col-xs-10 col-sm-5 width-70" id="id_perspectiva" data-placeholder="Elija una Perspectiva...">
+							</select>
+						</div>
+					</div>
+					<hr />
+					<div class="space-4"></div>
+					
+					<div class="form-group">
+						<label class="col-sm-3 control-label no-padding-right" for="id_categoria">Categor&iacute;a Indicador </label>
+						<div class="col-sm-9">
+							<select class="col-xs-10 col-sm-5 width-70" id="id_categoria" data-placeholder="Elija una Categor&iacute;a..."></select>
+						</div>
+
+						<div class="space-4"></div>
+
+					</div>
+				</div>
+				<div class="control-group">
+					<div class="row">
+						<div class="col-xs-12 center">
+							<table id="grid-table"></table>
+							<div id="grid-pager"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+{% block librerias %}
+<script src="{% static 'assets/js/jquery-ui-1.10.3.custom.min.js' %}"></script>
+<script src="{% static 'assets/js/jqGrid/jquery.jqGrid.min.js' %}"></script>
+<script src="{% static 'assets/js/jqGrid/i18n/grid.locale-en.js' %}"></script>
+<!--<script src="{% static 'assets/js/chosen.jquery.min.js' %}"></script>-->
+{% endblock %}
+{% block jquery %}
+<script type="text/javascript">
+
+
+	jQuery(function($) {
+		function getPerspectivas() {
+	  		$.ajax({
+	        	url:'../cargar_perspectivas/',
+	        	type:'GET',
+	        	dataType: 'json',
+		        success: function( data ) {
+		        	var items
+		        	$.each(data,function(index,data) {
+		    			items+='<option value="'+(index+1)+'">'+data.fields.nombre+'</option>';
+					});
+		            $("#id_perspectiva").append(items);
+
+		        }
+	    	});
+		};
+		function getCategorias() {
+	  		$.ajax({
+	        	url:'../cargar_categorias/',
+	        	type:'GET',
+	        	dataType: 'json',
+		        success: function( data ) {
+		        	var items='<option value="'+0+'">Todos</option>';
+		        	$.each(data,function(index,data) {
+		    			items+='<option value="'+(index+1)+'">'+data.fields.nombre+'</option>';
+					});
+		            $("#id_categoria").append(items);
+
+		        }
+	    	});
+		};
+
+		function getCategoriaValue(){
+			return $("#id_categoria option:selected").text();
+		}
+			/*	var items
+	  			$.getJSON("cargar_categorias/",function(data){
+		    		$.each(data,function(index,item) {
+		    			items+='<option value="'+(index+1)+'">'+item.fields.nombre+'</option>';
+					});
+		    	$("#form-field-select-3").append(items);
+				});
+			});*/
+			getPerspectivas();
+			getCategorias();
+		//$(".chosen-select").chosen(); 
+
+		var grid_selector = "#grid-table";
+		var pager_selector = "#grid-pager";
+				
+		jQuery(grid_selector).jqGrid({
+			//direction: "rtl",
+			
+			//data: grid_data,
+			//datatype: "local",
+			url:'../indicador/cargar_indicadores/',
+			datatype: "json",
+			height: 250,
+			colNames:['ID','Nombre','Numerador', 'Denominador', 'Unidad'],
+			colModel:[
+				{name:'id',index:'id', width:30, sorttype:"int", editable: true},
+				{name:'nombre',index:'nombre', width:150,editable: true,editoptions:{size:"20",maxlength:"30"}},
+				{name:'numerador',index:'numerador', width:150,editable: true,editoptions:{size:"20",maxlength:"30"}},
+				{name:'denominador',index:'denominador', width:150,editable: true,editoptions:{size:"20",maxlength:"30"}},
+				{name:'unidad', width:150,editable: true,edittype:"select", sortable:false, editoptions:{dataUrl:"cargar_unidades/"}},
+			], 
+
+			viewrecords : true,
+			rowNum:10,
+			rowList:[10,20,30],
+			pager : pager_selector,
+			altRows: true,
+			//toppager: true,
+			
+			multiselect: true,
+			//multikey: "ctrlKey",
+	        multiboxonly: true,
+
+			loadComplete : function() {
+				var table = this;
+				setTimeout(function(){
+					styleCheckbox(table);
+					
+					updateActionIcons(table);
+					updatePagerIcons(table);
+					enableTooltips(table);
+				}, 0);
+			},
+
+			editurl: "load_indicadores_tipo/",//nothing is saved
+			caption: "Indicadores",
+
+
+			autowidth: true
+
+		});
+				
+		//enable search/filter toolbar
+		//jQuery(grid_selector).jqGrid('filterToolbar',{defaultSearch:true,stringResult:true})
+		$("#id_categoria").change(function(){
+			//$("#grid-table").trigger('setGridParam', {tipo:getCategoriaValue()}, "reloadGrid", [{current: true}]);
+			$("#grid-table").jqGrid('setGridParam', {url:"../load_indicadores_tipo/", datatype:"json", page:1,postData: {tipo:getCategoriaValue(),csrfmiddlewaretoken: getCookie('csrftoken')}, mtype:"POST"}).trigger("reloadGrid");
+		})
+		function getUnidadesMedida() {  
+			$.getJSON("cargar_unidades/", null, function(data) {
+	            if (data != null) {
+	            	unidades="";
+	                for (var i in data) {
+	            		unidades+=data[i].fields.nombre+":"+data[i].fields.abreviatura;
+	            		if (data.length-1!=i)
+	            			unidades=unidades+";";
+					}
+					return unidades
+	            }
+			});
+	    }
+
+		function getSelectedRow(){
+			var row =jQuery(grid_selector).jqGrid('getGridParam','selrow');
+			var data = jQuery(grid_selector).jqGrid ('getCell', row, 1);
+			return data;
+		}
+		//switch element when editing inline
+		function aceSwitch( cellvalue, options, cell ) {
+			setTimeout(function(){
+				$(cell) .find('input[type=checkbox]')
+						.wrap('<label class="inline" />')
+					.addClass('ace ace-switch ace-switch-5')
+					.after('<span class="lbl"></span>');
+			}, 0);
+		}
+					//enable datepicker
+				
+				
+					//navButtons
+		jQuery(grid_selector).jqGrid('navGrid',pager_selector,
+			{ 	//navbar options
+				edit: false,
+				editicon : 'icon-pencil blue',
+				add: false,
+				addicon : 'icon-plus-sign purple',
+				del: false,
+				delicon : 'icon-trash red',
+				search: true,
+				searchicon : 'icon-search orange',
+				refresh: true,
+				refreshicon : 'icon-refresh green',
+				view: true,
+				viewicon : 'icon-zoom-in grey',
+			},
+			{
+				//edit record form
+				//closeAfterEdit: true,
+				editData: {categoria:getCategoriaValue()},
+				recreateForm: true,
+				beforeShowForm : function(e) {
+					var form = $(e[0]);
+					form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />')
+					style_edit_form(form);
+				}
+			},
+			{
+				//new record form
+				closeAfterAdd: true,
+				recreateForm: true,
+				viewPagerButtons: false,
+				beforeShowForm : function(e) {
+					var form = $(e[0]);
+					form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />')
+					style_edit_form(form);
+				}
+			},
+			{
+				//delete record form
+				recreateForm: true,
+				beforeShowForm : function(e) {
+					var form = $(e[0]);
+					if(form.data('styled')) return false;
+					
+					form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />')
+					style_delete_form(form);
+					
+					form.data('styled', true);
+				},
+				onClick : function(e) {
+					alert(1);
+				}
+			},
+			{
+				//search form
+				recreateForm: true,
+				afterShowSearch: function(e){
+					var form = $(e[0]);
+					form.closest('.ui-jqdialog').find('.ui-jqdialog-title').wrap('<div class="widget-header" />')
+					style_search_form(form);
+				},
+				afterRedraw: function(){
+					style_search_filters($(this));
+				}
+				,
+				multipleSearch: true,
+				/**
+				multipleGroup:true,
+				showQuery: true
+				*/
+			},
+			{
+				//view record form
+				recreateForm: true,
+				beforeShowForm: function(e){
+					var form = $(e[0]);
+					form.closest('.ui-jqdialog').find('.ui-jqdialog-title').wrap('<div class="widget-header" />')
+				}
+			}
+		)
+				
+				
+					
+		function style_edit_form(form) {
+			//enable datepicker on "sdate" field and switches for "stock" field
+			form.find('input[name=sdate]').datepicker({format:'yyyy-mm-dd' , autoclose:true})
+				.end().find('input[name=stock]')
+					  .addClass('ace ace-switch ace-switch-5').wrap('<label class="inline" />').after('<span class="lbl"></span>');
+
+			//update buttons classes
+			var buttons = form.next().find('.EditButton .fm-button');
+			buttons.addClass('btn btn-sm').find('[class*="-icon"]').remove();//ui-icon, s-icon
+			buttons.eq(0).addClass('btn-primary').prepend('<i class="icon-ok"></i>');
+			buttons.eq(1).prepend('<i class="icon-remove"></i>')
+			
+			buttons = form.next().find('.navButton a');
+			buttons.find('.ui-icon').remove();
+			buttons.eq(0).append('<i class="icon-chevron-left"></i>');
+			buttons.eq(1).append('<i class="icon-chevron-right"></i>');		
+		}
+
+		function style_delete_form(form) {
+			var buttons = form.next().find('.EditButton .fm-button');
+			buttons.addClass('btn btn-sm').find('[class*="-icon"]').remove();//ui-icon, s-icon
+			buttons.eq(0).addClass('btn-danger').prepend('<i class="icon-trash"></i>');
+			buttons.eq(1).prepend('<i class="icon-remove"></i>')
+		}
+		
+		function style_search_filters(form) {
+			form.find('.delete-rule').val('X');
+			form.find('.add-rule').addClass('btn btn-xs btn-primary');
+			form.find('.add-group').addClass('btn btn-xs btn-success');
+			form.find('.delete-group').addClass('btn btn-xs btn-danger');
+		}
+		function style_search_form(form) {
+			var dialog = form.closest('.ui-jqdialog');
+			var buttons = dialog.find('.EditTable')
+			buttons.find('.EditButton a[id*="_reset"]').addClass('btn btn-sm btn-info').find('.ui-icon').attr('class', 'icon-retweet');
+			buttons.find('.EditButton a[id*="_query"]').addClass('btn btn-sm btn-inverse').find('.ui-icon').attr('class', 'icon-comment-alt');
+			buttons.find('.EditButton a[id*="_search"]').addClass('btn btn-sm btn-purple').find('.ui-icon').attr('class', 'icon-search');
+		}
+		
+		function beforeDeleteCallback(e) {
+			var form = $(e[0]);
+			if(form.data('styled')) return false;
+			
+			form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />')
+			style_delete_form(form);
+			
+			form.data('styled', true);
+		}
+		
+		function beforeEditCallback(e) {
+			var form = $(e[0]);
+			form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />')
+			style_edit_form(form);
+		}
+
+
+
+		//it causes some flicker when reloading or navigating grid
+		//it may be possible to have some custom formatter to do this as the grid is being created to prevent this
+		//or go back to default browser checkbox styles for the grid
+		function styleCheckbox(table) {
+		/**
+			$(table).find('input:checkbox').addClass('ace')
+			.wrap('<label />')
+			.after('<span class="lbl align-top" />')
+
+
+			$('.ui-jqgrid-labels th[id*="_cb"]:first-child')
+			.find('input.cbox[type=checkbox]').addClass('ace')
+			.wrap('<label />').after('<span class="lbl align-top" />');
+		*/
+		}
+		
+
+		//unlike navButtons icons, action icons in rows seem to be hard-coded
+		//you can change them like this in here if you want
+		function updateActionIcons(table) {
+			/**
+			var replacement = 
+			{
+				'ui-icon-pencil' : 'icon-pencil blue',
+				'ui-icon-trash' : 'icon-trash red',
+				'ui-icon-disk' : 'icon-ok green',
+				'ui-icon-cancel' : 'icon-remove red'
+			};
+			$(table).find('.ui-pg-div span.ui-icon').each(function(){
+				var icon = $(this);
+				var $class = $.trim(icon.attr('class').replace('ui-icon', ''));
+				if($class in replacement) icon.attr('class', 'ui-icon '+replacement[$class]);
+			})
+			*/
+		}
+		
+		//replace icons with FontAwesome icons like above
+		function updatePagerIcons(table) {
+			var replacement = 
+			{
+				'ui-icon-seek-first' : 'icon-double-angle-left bigger-140',
+				'ui-icon-seek-prev' : 'icon-angle-left bigger-140',
+				'ui-icon-seek-next' : 'icon-angle-right bigger-140',
+				'ui-icon-seek-end' : 'icon-double-angle-right bigger-140'
+			};
+			$('.ui-pg-table:not(.navtable) > tbody > tr > .ui-pg-button > .ui-icon').each(function(){
+				var icon = $(this);
+				var $class = $.trim(icon.attr('class').replace('ui-icon', ''));
+				
+				if($class in replacement) icon.attr('class', 'ui-icon '+replacement[$class]);
+			})
+		}
+
+		function enableTooltips(table) {
+			$('.navtable .ui-pg-button').tooltip({container:'body'});
+			$(table).find('.ui-pg-div').tooltip({container:'body'});
+		}
+		
+		function getCookie(name) {
+	     			var cookieValue = null;
+		            if (document.cookie && document.cookie != '') {
+		                 var cookies = document.cookie.split(';');
+		                for (var i = 0; i < cookies.length; i++) {
+		                     var cookie = jQuery.trim(cookies[i]);
+		                     // Does this cookie string begin with the name we want?
+		                 	if (cookie.substring(0, name.length + 1) == (name + '=')) {
+		                    	cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+		                    	break;
+		                 	}
+		             	}
+	 				}
+						return cookieValue;
+		}	
+
+		$.ajaxSetup({ 
+				beforeSend: function(xhr, settings) {
+					function getCookie(name) {
+	     			var cookieValue = null;
+		            if (document.cookie && document.cookie != '') {
+		                 var cookies = document.cookie.split(';');
+		                for (var i = 0; i < cookies.length; i++) {
+		                     var cookie = jQuery.trim(cookies[i]);
+		                     // Does this cookie string begin with the name we want?
+		                 	if (cookie.substring(0, name.length + 1) == (name + '=')) {
+		                    	cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+		                    	break;
+		                 	}
+		             	}
+	 				}
+						return cookieValue;
+					}
+					if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+	            	// Only send the token to relative URLs i.e. locally.
+	            	xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+					}
+				} 
+		});
+
+
+	});
+</script>
+{% endblock%}

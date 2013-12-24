@@ -1,0 +1,30 @@
+from django.conf.urls import patterns, include, url
+
+from . import views
+
+urlpatterns = patterns("",
+    url(r'^$', views.home, name='home'),
+	url(r'^mision/$', views.show_mision, name='show_mision'),
+	url(r'^perspectiva/$', views.show_perspectiva, name='show_perspectiva'),
+    url(r'^envio-mision/$', views.ingresar_mision, name='ingresar_mision'),
+    url(r'^perspectiva/cargar_perspectivas/$', views.load_perspectiva, name='load_perspectiva'),
+    url(r'^perspectiva/editar_perspectivas/$', views.edit_perspectiva, name='edit_perspectiva'),
+    #url(r'^estrategias/$', views.showEstrategia, name='showEstrategia'),
+    url(r'^categoria/$', views.show_categoria, name='show_categoria'),
+    url(r'^categoria/cargar_categorias/$', views.load_categorias, name='load_categorias'),
+    url(r'^categoria/editar_categorias/$', views.editar_categoria, name='ingresar_categoria'),
+    url(r'^unidad_medida/$', views.show_unidad, name='show_unidad'),  
+    url(r'^unidad_medida/cargar_unidades/$', views.load_unidades, name='load_unidades'),
+    url(r'^unidad_medida/editar_unidades/$', views.editar_unidad, name='editar_unidad'),
+    url(r'^indicador/$', views.show_indicador, name='show_inidicador'),  
+    url(r'^indicador/cargar_indicadores/$', views.load_indicadores, name='load_indicadores'),
+    url(r'^indicador/cargar_unidades/$', views.load_select_unidades, name='load_select_unidades'),
+    url(r'^indicador/cargar_categorias/$', views.load_select_categorias, name='load_select_categorias'),
+    url(r'^indicador/editar_indicadores/$', views.edit_indicador, name='edit_indicador'),
+    url(r'^ingresar_indicadores_categorias/$', views.ingresar_categorias_indicador, name='ingresar_categorias_indicador'),
+    url(r'^ingresar_indicadores_categorias/cargar_categorias/$', views.load_categorias, name='load_categorias'),
+    url(r'^estrategia/$', views.show_estrategia, name='show_estrategia'),
+    url(r'^cargar_perspectivas/$', views.load_select_perspectivas, name='load_select_perspectivas'),
+    url(r'^cargar_categorias/$', views.load_select_categoria, name='load_select_categoria'),
+    url(r'^load_indicadores_tipo/$', views.load_select_categoria_tipo, name='load_select_categoria_tipo'),
+)

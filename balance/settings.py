@@ -185,7 +185,7 @@ ACCOUNT_LOGOUT_REDIRECT_URL = "home"
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 2
 
 LOGIN_REDIRECT_URL = "/scorecard"
-LOGOUT_REDIRECT_URL = "/scorecard"
+LOGOUT_REDIRECT_URL = "/"
 
 AUTHENTICATION_BACKENDS = [
     "account.auth_backends.UsernameAuthenticationBackend",

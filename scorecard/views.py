@@ -290,11 +290,15 @@ def load_categorias(request):
     return HttpResponse(data, content_type='application/json')
 
 def show_perspectiva(request):
-    t=get_template('scorecard/perspectiva.html')
-    html= t.render(Context({'title':'BSC GPA', 'empresa':'Gobierno Provincial del Azuay'}))
-    return HttpResponse(html)
+    """
+    """
+    data = {'title':settings.SITE_NAME, 'empresa':'Gobierno Provincial del Azuay'}
+    csrfContext = RequestContext(request, data)
+    return render_to_response('scorecard/perspectiva.html',data, csrfContext)
 
 def ingresar_categorias_indicador(request):
+    """
+    """
     t = get_template('scorecard/ingreso_categorias.html')
     opciones = opcionesSelectCategorias()
     data = {'title':'BSC GPA', 'empresa':'Gobierno Provincial del Azuay', 'opciones_select':opciones}

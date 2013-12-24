@@ -3,7 +3,7 @@
 {% load url from future %}
 
 <a data-toggle="dropdown" href="#" class="dropdown-toggle">
-  <img class="nav-user-photo" src="{% static "assets/avatars/user.jpg" %}" alt="Jason's Photo" />
+  <img class="user" src="{% static "assets/avatars/avatar2.png" %}"/>
   <span class="user-info">
 	<small>Bienvenido,</small>{% user_display request.user %}
   </span>
@@ -16,7 +16,7 @@
   <li>
 	<a href="{% url "account_logout" %}">
 	  <i class="icon-off"></i>
-	  Logout
+	  Salir
 	</a>
   </li>
 </ul>

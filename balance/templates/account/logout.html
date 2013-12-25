@@ -1,0 +1,21 @@
+{% extends "main.html" %}
+
+{% load url from future %}
+{% load i18n %}
+
+{% block head_title %}{% trans "Log out" %}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="widget-box">
+            <form method="POST" action="{% url "account_logout" %}">
+                <legend>Salir</legend>
+                <fieldset>
+                    {% csrf_token %}
+                    <p>Seguro de salir ?</p>
+                    <button type="submit" class="btn btn-primary">Salir</button>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+{% endblock %}

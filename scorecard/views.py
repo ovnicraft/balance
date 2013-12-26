@@ -6,6 +6,7 @@ from django.http import Http404, HttpResponse
 from django.shortcuts import render_to_response
 from django.core import serializers
 from django.http import QueryDict
+from django.contrib.auth.decorators import login_required
 
 from django.conf import settings
 
@@ -25,6 +26,7 @@ def home(request):
     csrfContext = RequestContext(request)
     return render_to_response("main.html", data, csrfContext)
 
+@login_required
 def show_unidad(request):
     """
     """
@@ -33,6 +35,7 @@ def show_unidad(request):
     csrfContext = RequestContext(request,data)
     return render_to_response('scorecard/unidades.html', data, csrfContext)
 
+@login_required
 def show_mision(request):
     """
     """    
@@ -46,6 +49,7 @@ def show_mision(request):
     csrfContext=RequestContext(request,data)
     return render_to_response('scorecard/mision.html', data, csrfContext)
 
+@login_required
 def ingresar_mision(request):
     """
     """    
@@ -70,6 +74,7 @@ def ingresar_mision(request):
     else:
         raise Http404
 
+@login_required
 def editar_unidad(request):
     if request.is_ajax() and request.POST:
         mydict=QueryDict.dict(request.POST)
@@ -116,6 +121,7 @@ def editar_categoria(request):
     else:
         raise Http404
 
+@login_required
 def edit_indicador(request):
     """
     """
@@ -136,6 +142,7 @@ def edit_indicador(request):
     else:
         raise Http404  
 
+@login_required
 def load_select_unidades(request):
     """
     """
@@ -148,6 +155,7 @@ def load_select_unidades(request):
     data+="</select>"    
     return HttpResponse(data,content_type='application/json')
 
+@login_required
 def load_select_categorias(request):
     """
     """

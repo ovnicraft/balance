@@ -25,8 +25,8 @@ jQuery(function($) {
 				 //editformbutton:true, editOptions:{recreateForm: true, beforeShowForm:beforeEditCallback}
 			 }
 			},
-			{name:'fields.nombre',index:'fields.nombre', width:150,editable: true,editoptions:{size:"20",maxlength:"30"}},
-			{name:'fields.abreviatura',index:'fields.abreviatura', width:90, sortable:false, editable: true,edittype:"text", editoptions:{rows:"2",cols:"10"}} 
+			{name:'fields.nombre', index:'fields.nombre', width:150, editable: true, editoptions:{size: "20", maxlength: "30"}},
+			{name:'fields.abreviatura', index:'fields.abreviatura', width:90, sortable:false, editable: true,edittype:"text", editoptions:{rows: "2", cols: "10"}} 
 		], 
 		viewrecords : true,
 		rowNum: 10,
@@ -52,7 +52,7 @@ jQuery(function($) {
 		caption: "Unidades Medida",
 		autowidth: true
 		
-	}).navGrid('#grid-pager');
+	});
 	
 	//enable search/filter toolbar
 	//jQuery(grid_selector).jqGrid('filterToolbar',{defaultSearch:true,stringResult:true})
@@ -80,19 +80,19 @@ jQuery(function($) {
 	
 	
 	//navButtons
-	jQuery(grid_selector).jqGrid('navGrid', pager_selector,{ 	//navbar options
+	jQuery(grid_selector)
+        .jqGrid('navGrid', pager_selector, { 	//navbar options
 		edit: true,
-		editicon : 'icon-pencil blue',
+        editicon : 'icon-pencil blue',
 		add: true,
-		addicon : 'icon-plus-sign purple',
+        addicon: "icon-plus-sign purple",
 		del: true,
-		delicon : 'icon-trash red',
+        delicon : 'icon-trash red',
 		search: true,
-		searchicon : 'icon-search orange',
+        searchicon : 'icon-search orange',
 		refresh: true,
-		refreshicon : 'icon-refresh green',
 		view: true,
-		viewicon : 'icon-zoom-in grey'
+        viewicon : 'icon-zoom-in grey'
 	},
     {
 		//edit record form
